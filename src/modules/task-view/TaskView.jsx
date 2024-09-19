@@ -1,28 +1,64 @@
+import { useState } from "react";
 import { FaRegFolderOpen } from "react-icons/fa";
 import TaskList from "./components/task-list/TaskList";
+import AddEditTask from "./components/add-edit-task/AddEditTask";
 
-const tasks = [
-    {
-        name: 'Task 1',
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        status: 'PENDING'
-    },
-    {
-        name: 'Task 2',
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        status: 'PENDING'
-    },
-    {
-        name: 'Task 3',
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        status: 'PENDING'
-    },
-    {
-        name: 'Task 4',
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-        status: 'PENDING'
+const RenderTaskView = () => {
+    const [visibleScreen, setVisibleScreen] = useState({ screen: "TASK_LIST", data: null });
+    const [tasks, setTasks] = useState([]);
+
+    const handleVisibleScreen = (screen, data = null) => {
+        setVisibleScreen((prev) => ({ ...prev, screen, data }));
     }
-];
+
+    const handleAddUpdateTask = (task) => {
+        const tempTasks = [...tasks];
+        const taskIndex = tempTasks.findIndex((t) => t.id === task.id);
+        if (taskIndex > -1) {
+            tempTasks[taskIndex] = task;
+        } else {
+            tempTasks.push(task);
+        }
+
+        setTasks(tempTasks);
+        handleVisibleScreen("TASK_LIST");
+    }
+
+    const handleDeleteTask = (task) => {
+        setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    }
+
+    switch (visibleScreen.screen) {
+        case "TASK_LIST":
+            return (
+                <TaskList
+                    tasks={tasks}
+                    handleVisibleScreen={handleVisibleScreen}
+                    handleDeleteTask={handleDeleteTask}
+                />
+            );
+        case "ADD_TASK":
+            return (
+                <AddEditTask
+                    visibleScreen={visibleScreen.screen}
+                    handleVisibleScreen={handleVisibleScreen}
+                    handleAddUpdateTask={handleAddUpdateTask}
+                />
+            );
+        case "EDIT_TASK":
+            return (
+                <AddEditTask
+                    visibleScreen={visibleScreen.screen}
+                    task={visibleScreen.data}
+                    handleVisibleScreen={handleVisibleScreen}
+                    handleAddUpdateTask={handleAddUpdateTask}
+                    handleDeleteTask={handleDeleteTask}
+                />
+            );
+        default:
+            break;
+    }
+}
 
 const TaskView = () => {
     return (
@@ -35,7 +71,7 @@ const TaskView = () => {
                             <div>Task List View</div>
                         </div>
                     </div>
-                    <TaskList tasks={tasks} />
+                    <RenderTaskView />
                 </div>
             </div>
         </>
