@@ -34,6 +34,7 @@ const RenderTaskView = () => {
                 <TaskList
                     tasks={tasks}
                     handleVisibleScreen={handleVisibleScreen}
+                    handleAddUpdateTask={handleAddUpdateTask}
                     handleDeleteTask={handleDeleteTask}
                 />
             );
@@ -41,6 +42,7 @@ const RenderTaskView = () => {
             return (
                 <AddEditTask
                     visibleScreen={visibleScreen.screen}
+                    tasks={tasks}
                     handleVisibleScreen={handleVisibleScreen}
                     handleAddUpdateTask={handleAddUpdateTask}
                 />
@@ -50,6 +52,7 @@ const RenderTaskView = () => {
                 <AddEditTask
                     visibleScreen={visibleScreen.screen}
                     task={visibleScreen.data}
+                    tasks={tasks}
                     handleVisibleScreen={handleVisibleScreen}
                     handleAddUpdateTask={handleAddUpdateTask}
                     handleDeleteTask={handleDeleteTask}
