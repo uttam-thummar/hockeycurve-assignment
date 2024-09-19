@@ -1,11 +1,10 @@
 import './App.css';
+import TaskView from './modules/task-view/TaskView';
 
 function App() {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
+      <TaskView />
     </>
   )
 }
