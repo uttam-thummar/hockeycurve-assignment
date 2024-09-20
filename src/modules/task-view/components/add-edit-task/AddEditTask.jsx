@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { IoCalendarClearOutline } from "react-icons/io5";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteTask, setVisibleScreen, updateTask } from "../../../../redux/reducers/task/taskSlice";
 
-const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAddUpdateTask, handleDeleteTask }) => {
+const AddEditTask = () => {
+    const dispatch = useDispatch();
+    const { visibleScreen, tasks } = useSelector((store) => store.task);
+
     const [taskDetails, setTaskDetails] = useState({
         id: Date.now(),
         title: "",
@@ -29,7 +33,7 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
     }
 
     const handleClickCancel = () => {
-        handleVisibleScreen("TASK_LIST");
+        dispatch(setVisibleScreen({ screen: "TASK_LIST" }));
     }
 
     const isValidToSubmit = useMemo(() => {
@@ -43,7 +47,7 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
         if (taskDetails.title.trim() === "") {
             setTaskDetailsErrors((prev) => ({ ...prev, title: "Task title cannot be empty." }));
             isError = true;
-        } else if (visibleScreen !== "EDIT_TASK" && tasks.findIndex((t) => t.title.trim().toLowerCase() === taskDetails.title.trim().toLowerCase()) > -1) {
+        } else if (visibleScreen.screen !== "EDIT_TASK" && tasks.findIndex((t) => t.title.trim().toLowerCase() === taskDetails.title.trim().toLowerCase()) > -1) {
             setTaskDetailsErrors((prev) => ({ ...prev, title: "Task with this title already exist." }));
             isError = true;
         } else {
@@ -72,27 +76,27 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
         }
 
         if (!isError) {
-            handleAddUpdateTask(taskDetails);
+            dispatch(updateTask({ task: { ...taskDetails, dueDate: new Date(taskDetails.dueDate).toString() } }));
         }
     }
 
     const hanldeClickMarkAsDone = () => {
-        handleAddUpdateTask({ ...taskDetails, status: "DONE" });
+        dispatch(updateTask({ task: { ...taskDetails, status: "DONE", dueDate: new Date(taskDetails.dueDate).toString() } }));
     }
 
     const handleClickDelete = (task) => {
-        handleDeleteTask(task);
+        dispatch(deleteTask({ task }));
         handleClickCancel();
     }
 
     useEffect(() => {
-        if (visibleScreen === "EDIT_TASK" && task) {
+        if (visibleScreen.screen === "EDIT_TASK" && visibleScreen.data) {
             setTaskDetails({
-                ...task,
-                dueDate: new Date(task.dueDate)
+                ...visibleScreen.data,
+                dueDate: new Date(visibleScreen.data.dueDate)
             });
         }
-    }, [visibleScreen, task]);
+    }, [visibleScreen]);
 
     return (
         <>
@@ -100,9 +104,9 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
 
                 <div className="max-w-md mx-auto">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold text-gray-700">{visibleScreen === "EDIT_TASK" ? "Edit Task" : "Add Task"}</h2>
-                        {(visibleScreen === "EDIT_TASK" && task) && (
-                            <button onClick={() => handleClickDelete(task)} className="flex justify-center items-center gap-2 bg-pink-500 hover:bg-pink-700 text-white px-4 py-1 rounded-full outline-none">
+                        <h2 className="text-xl font-semibold text-gray-700">{visibleScreen.screen === "EDIT_TASK" ? "Edit Task" : "Add Task"}</h2>
+                        {(visibleScreen.screen === "EDIT_TASK" && visibleScreen.data) && (
+                            <button onClick={() => handleClickDelete(visibleScreen.data)} className="flex justify-center items-center gap-2 bg-pink-500 hover:bg-pink-700 text-white px-4 py-1 rounded-full outline-none">
                                 <MdOutlineDeleteOutline className="text-lg" />
                                 Delete
                             </button>
@@ -175,9 +179,9 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
                     </div>
                     <div className="mt-6 flex justify-center gap-3 flex-wrap">
                         <button disabled={!isValidToSubmit} onClick={handleClickSaveChanges} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition disabled:bg-gray-300 outline-none">
-                            {visibleScreen === "EDIT_TASK" ? "Save Changes" : "Add Task"}
+                            {visibleScreen.screen === "EDIT_TASK" ? "Save Changes" : "Add Task"}
                         </button>
-                        {(visibleScreen === "EDIT_TASK" && task) && (
+                        {(visibleScreen.screen === "EDIT_TASK" && visibleScreen.data) && (
                             <button disabled={!isValidToSubmit} onClick={hanldeClickMarkAsDone} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition disabled:bg-gray-300 outline-none">Mark as Done</button>
                         )}
                         <button onClick={handleClickCancel} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition outline-none">Cancel</button>
@@ -188,14 +192,5 @@ const AddEditTask = ({ visibleScreen, task, tasks, handleVisibleScreen, handleAd
         </>
     )
 }
-
-AddEditTask.propTypes = {
-    visibleScreen: PropTypes.string.isRequired,
-    task: PropTypes.object,
-    tasks: PropTypes.array.isRequired,
-    handleVisibleScreen: PropTypes.func.isRequired,
-    handleAddUpdateTask: PropTypes.func.isRequired,
-    handleDeleteTask: PropTypes.func
-};
 
 export default AddEditTask;

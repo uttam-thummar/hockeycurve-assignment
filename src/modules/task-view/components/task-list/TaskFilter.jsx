@@ -1,16 +1,20 @@
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from "react-redux";
+import { setTaskListFilter } from "../../../../redux/reducers/task/taskSlice";
 
 const filters = ['ALL', 'HIGH', 'MEDIUM', 'LOW', 'DONE'];
 
-const TaskFilter = ({ appliedFilter, handleAppliedFilter }) => {
+const TaskFilter = () => {
+    const dispatch = useDispatch();
+    const { taskListFilter } = useSelector((store) => store.task);
+
     return (
         <>
             <div className="flex space-x-2 mt-4">
                 {filters.map((filter, index) => (
                     <button
                         key={index}
-                        onClick={() => handleAppliedFilter(filter)}
-                        className={`min-w-5 sm:min-w-16 py-2 px-3 rounded-t-md rounded-b-none text-xs sm:text-sm  capitalize transition duration-300 ${appliedFilter === filter ? 'bg-white text-black hover:bg-white' : 'text-white bg-teal-800 hover:bg-teal-900'}`}
+                        onClick={() => dispatch(setTaskListFilter(filter))}
+                        className={`min-w-5 sm:min-w-16 py-2 px-3 rounded-t-md rounded-b-none text-xs sm:text-sm  capitalize transition duration-300 ${taskListFilter === filter ? 'bg-white text-black hover:bg-white' : 'text-white bg-teal-800 hover:bg-teal-900'}`}
                     >
                         {filter.toLowerCase()}
                     </button>
@@ -19,10 +23,5 @@ const TaskFilter = ({ appliedFilter, handleAppliedFilter }) => {
         </>
     )
 }
-
-TaskFilter.propTypes = {
-    appliedFilter: PropTypes.string.isRequired,
-    handleAppliedFilter: PropTypes.func.isRequired
-};
 
 export default TaskFilter;

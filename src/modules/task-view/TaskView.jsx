@@ -1,62 +1,34 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { FaRegFolderOpen } from "react-icons/fa";
 import TaskList from "./components/task-list/TaskList";
 import AddEditTask from "./components/add-edit-task/AddEditTask";
+import { useDispatch, useSelector } from "react-redux";
+import { setTasks } from "../../redux/reducers/task/taskSlice";
 
 const RenderTaskView = () => {
-    const [visibleScreen, setVisibleScreen] = useState({ screen: "TASK_LIST", data: null });
-    const [tasks, setTasks] = useState([]);
+    const dispatch = useDispatch();
+    const { visibleScreen } = useSelector((store) => store.task);
 
-    const handleVisibleScreen = (screen, data = null) => {
-        setVisibleScreen((prev) => ({ ...prev, screen, data }));
-    }
-
-    const handleAddUpdateTask = (task) => {
-        const tempTasks = [...tasks];
-        const taskIndex = tempTasks.findIndex((t) => t.id === task.id);
-        if (taskIndex > -1) {
-            tempTasks[taskIndex] = task;
-        } else {
-            tempTasks.push(task);
+    useEffect(() => {
+        const tasksStringify = localStorage.getItem("tasks");
+        if (tasksStringify) {
+            const tasks = JSON.parse(tasksStringify);
+            dispatch(setTasks({ tasks }))
         }
-
-        setTasks(tempTasks);
-        handleVisibleScreen("TASK_LIST");
-    }
-
-    const handleDeleteTask = (task) => {
-        setTasks((prev) => prev.filter((t) => t.id !== task.id));
-    }
+    }, [dispatch]);
 
     switch (visibleScreen.screen) {
         case "TASK_LIST":
             return (
-                <TaskList
-                    tasks={tasks}
-                    handleVisibleScreen={handleVisibleScreen}
-                    handleAddUpdateTask={handleAddUpdateTask}
-                    handleDeleteTask={handleDeleteTask}
-                />
+                <TaskList />
             );
         case "ADD_TASK":
             return (
-                <AddEditTask
-                    visibleScreen={visibleScreen.screen}
-                    tasks={tasks}
-                    handleVisibleScreen={handleVisibleScreen}
-                    handleAddUpdateTask={handleAddUpdateTask}
-                />
+                <AddEditTask />
             );
         case "EDIT_TASK":
             return (
-                <AddEditTask
-                    visibleScreen={visibleScreen.screen}
-                    task={visibleScreen.data}
-                    tasks={tasks}
-                    handleVisibleScreen={handleVisibleScreen}
-                    handleAddUpdateTask={handleAddUpdateTask}
-                    handleDeleteTask={handleDeleteTask}
-                />
+                <AddEditTask />
             );
         default:
             break;

@@ -50,6 +50,10 @@ button {
   width: 100%;
 }
 
+.react-datepicker-popper {
+  min-width: 330px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

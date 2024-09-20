@@ -1,26 +1,26 @@
 import { useCallback, useState } from "react";
-import PropTypes from "prop-types";
 import { IoAddCircle } from "react-icons/io5";
 import TaskFilter from "./TaskFilter";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { BiSolidRightArrow } from "react-icons/bi";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteTask, setVisibleScreen, updateTask } from "../../../../redux/reducers/task/taskSlice";
 
-const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDeleteTask }) => {
-    const [appliedFilter, setAppliedFilter] = useState("ALL");
+const TaskList = () => {
+    const dispatch = useDispatch();
+    const { tasks, taskListFilter } = useSelector((store) => store.task);
+
     const [expandedTaskId, setExpandedTaskId] = useState(null);
 
-    const handleAppliedFilter = (filter) => {
-        setAppliedFilter(filter);
-    }
-
     const handleClickAddTask = () => {
-        handleVisibleScreen("ADD_TASK");
+        dispatch(setVisibleScreen({ screen: "ADD_TASK" }));
+
     }
 
     const handleClickEditTask = (task) => {
-        handleVisibleScreen("EDIT_TASK", task);
+        dispatch(setVisibleScreen({ screen: "EDIT_TASK", data: task }));
     }
 
     const handleToggleExpandedTaskId = (id) => {
@@ -28,7 +28,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
     }
 
     const handleClickOnSnooze = (task) => {
-        handleAddUpdateTask({ ...task, dueDate: new Date(new Date(task.dueDate).getTime() + 1000 * 60 * 60 * 6) });
+        dispatch(updateTask({ task: { ...task, dueDate: new Date(new Date(task.dueDate).getTime() + 1000 * 60 * 60 * 6).toString() } }));
     }
 
     const getTaskPriorityColor = (priority) => {
@@ -56,7 +56,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
     }
 
     const getFilteredTasks = useCallback(() => {
-        switch (appliedFilter) {
+        switch (taskListFilter) {
             case "ALL":
                 return tasks;
             case "HIGH":
@@ -70,7 +70,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
             default:
                 break;
         }
-    }, [tasks, appliedFilter]);
+    }, [tasks, taskListFilter]);
 
     return (
         <>
@@ -80,11 +80,11 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
                         <IoAddCircle className="text-3xl" />
                         Add new task
                     </button>
-                    <TaskFilter appliedFilter={appliedFilter} handleAppliedFilter={handleAppliedFilter} />
+                    <TaskFilter />
                 </div>
                 <div className="bg-gray-100">
                     <div className="space-y-4 py-4">
-                        {tasks.length === 0 ? (
+                        {getFilteredTasks().length === 0 ? (
                             <div className="flex justify-center items-center min-h-96">
                                 <p className="text-gray-800 font-semibold text-xl">No tasks found!</p>
                             </div>
@@ -101,7 +101,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
                                             </div>
                                             <div>
                                                 <h2 className="text-lg sm:text-xl font-semibold line-clamp-2 overflow-hidden text-ellipsis break-words">{task.title}</h2>
-                                                <p className="text-sm">Due Date: {moment(task.dueDate).format("DD MMM YYYY")}</p>
+                                                <p className="text-sm">Due Date: {moment(new Date(task.dueDate)).format("DD MMM YYYY")}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -110,7 +110,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
                                         </div>
                                     </div>
 
-                                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${expandedTaskId === task.id ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
+                                    <div className={`overflow-y-auto transition-all duration-500 ease-in-out ${expandedTaskId === task.id ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
                                         <div className="px-4 py-4 sm:px-6 md:px-8 space-y-3">
                                             <div>
                                                 <p className="text-lg font-bold"><span className="text-teal-800">Title :</span> {task.title}</p>
@@ -128,7 +128,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 items-center">
                                                     <p className="text-lg">
-                                                        {moment(task.dueDate).format("DD MMM YYYY - hh:mm a")}
+                                                        {moment(new Date(task.dueDate)).format("DD MMM YYYY - hh:mm a")}
                                                     </p>
                                                     <p onClick={() => handleClickOnSnooze(task)} className="underline text-sm cursor-pointer transition-all duration-100 hover:font-semibold">Snooze for 6 hours</p>
                                                 </div>
@@ -138,7 +138,7 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
                                                     Edit
                                                     <FiEdit className="text-lg" />
                                                 </button>
-                                                <button onClick={() => handleDeleteTask(task)} className="flex justify-center items-center gap-2 bg-teal-800 text-white px-7 py-1 rounded-full hover:bg-teal-900 transition">
+                                                <button onClick={() => dispatch(deleteTask({ task }))} className="flex justify-center items-center gap-2 bg-teal-800 text-white px-7 py-1 rounded-full hover:bg-teal-900 transition">
                                                     <MdOutlineDeleteOutline className="text-lg" />
                                                     Delete
                                                 </button>
@@ -154,12 +154,5 @@ const TaskList = ({ tasks, handleVisibleScreen, handleAddUpdateTask, handleDelet
         </>
     )
 }
-
-TaskList.propTypes = {
-    tasks: PropTypes.array.isRequired,
-    handleVisibleScreen: PropTypes.func.isRequired,
-    handleAddUpdateTask: PropTypes.func.isRequired,
-    handleDeleteTask: PropTypes.func.isRequired
-};
 
 export default TaskList;
