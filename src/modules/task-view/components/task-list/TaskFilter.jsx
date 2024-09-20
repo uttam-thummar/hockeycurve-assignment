@@ -14,7 +14,7 @@ const TaskFilter = () => {
                     <button
                         key={index}
                         onClick={() => dispatch(setTaskListFilter(filter))}
-                        className={`min-w-5 sm:min-w-16 py-2 px-3 rounded-t-md rounded-b-none text-xs sm:text-sm  capitalize transition duration-300 ${taskListFilter === filter ? 'bg-white text-black hover:bg-white' : 'text-white bg-teal-800 hover:bg-teal-900'}`}
+                        className={`min-w-5 sm:min-w-16 py-2 px-3 rounded-t-md rounded-b-none text-xs sm:text-sm  capitalize transition duration-300 ${taskListFilter === filter ? 'bg-white text-black hover:bg-white dark:bg-gray-300 dark:text-black dark:hover:bg-gray-300' : 'text-white bg-teal-800 hover:bg-teal-900 dark:bg-teal-700 dark:hover:bg-teal-800 dark:text-gray-300'}`}
                     >
                         {filter.toLowerCase()}
                     </button>

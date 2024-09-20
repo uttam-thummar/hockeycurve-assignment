@@ -100,11 +100,10 @@ const AddEditTask = () => {
 
     return (
         <>
-            <div className="p-4 mx-auto bg-gray-100 rounded-lg transition duration-500">
-
+            <div className="p-4 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg transition duration-100">
                 <div className="max-w-md mx-auto">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold text-gray-700">{visibleScreen.screen === "EDIT_TASK" ? "Edit Task" : "Add Task"}</h2>
+                        <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">{visibleScreen.screen === "EDIT_TASK" ? "Edit Task" : "Add Task"}</h2>
                         {(visibleScreen.screen === "EDIT_TASK" && visibleScreen.data) && (
                             <button onClick={() => handleClickDelete(visibleScreen.data)} className="flex justify-center items-center gap-2 bg-pink-500 hover:bg-pink-700 text-white px-4 py-1 rounded-full outline-none">
                                 <MdOutlineDeleteOutline className="text-lg" />
@@ -113,34 +112,34 @@ const AddEditTask = () => {
                         )}
                     </div>
                     <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">Task Title</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Task Title</label>
                         <input
                             type="text"
                             name="title"
                             autoFocus
                             value={taskDetails.title}
                             onChange={handleTaskDetailsChange}
-                            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-teal-500 outline-none"
+                            className="w-full mt-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring focus:ring-teal-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
                         />
                         {taskDetailsErrors.title && (
-                            <span className="text-red-800 text-sm font-semibold">{taskDetailsErrors.title}</span>
+                            <span className="text-red-800 dark:text-red-500 text-sm font-semibold">{taskDetailsErrors.title}</span>
                         )}
                     </div>
                     <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">Description</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
                         <textarea
                             name="description"
                             rows="3"
                             value={taskDetails.description}
                             onChange={handleTaskDetailsChange}
-                            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-teal-500 outline-none"
+                            className="w-full mt-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring focus:ring-teal-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
                         />
                         {taskDetailsErrors.description && (
-                            <span className="text-red-800 text-sm font-semibold">{taskDetailsErrors.description}</span>
+                            <span className="text-red-800 dark:text-red-500 text-sm font-semibold">{taskDetailsErrors.description}</span>
                         )}
                     </div>
                     <div className="mt-4 relative">
-                        <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Due Date</label>
                         <DatePicker
                             showIcon
                             showTimeSelect
@@ -153,20 +152,20 @@ const AddEditTask = () => {
                             selected={taskDetails.dueDate}
                             onChange={handleDueDateChange}
                             placeholderText="Select due date"
-                            className="w-full mt-2 !px-4 !py-2 border border-gray-300 rounded-md focus:ring focus:ring-teal-500  outline-none"
+                            className="w-full mt-2 !px-4 !py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring focus:ring-teal-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
                         />
                         {taskDetailsErrors.dueDate && (
-                            <span className="text-red-800 text-sm font-semibold">{taskDetailsErrors.dueDate}</span>
+                            <span className="text-red-800 dark:text-red-500 text-sm font-semibold">{taskDetailsErrors.dueDate}</span>
                         )}
                     </div>
 
                     <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 ">Priority</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Priority</label>
                         <select
                             name="priority"
                             value={taskDetails.priority}
                             onChange={handleTaskDetailsChange}
-                            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-teal-500 outline-none"
+                            className="w-full mt-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring focus:ring-teal-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
                         >
                             <option value="">Select Priority</option>
                             <option value="HIGH">High</option>
@@ -174,20 +173,19 @@ const AddEditTask = () => {
                             <option value="LOW">Low</option>
                         </select>
                         {taskDetailsErrors.priority && (
-                            <span className="text-red-800 text-sm font-semibold">{taskDetailsErrors.priority}</span>
+                            <span className="text-red-800 dark:text-red-500 text-sm font-semibold">{taskDetailsErrors.priority}</span>
                         )}
                     </div>
                     <div className="mt-6 flex justify-center gap-3 flex-wrap">
-                        <button disabled={!isValidToSubmit} onClick={handleClickSaveChanges} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition disabled:bg-gray-300 outline-none">
+                        <button disabled={!isValidToSubmit} onClick={handleClickSaveChanges} className="bg-teal-800 dark:bg-teal-600 text-white px-4 py-1 rounded-full hover:bg-teal-900 dark:hover:bg-teal-700 transition disabled:bg-gray-300 dark:disabled:bg-gray-500 outline-none">
                             {visibleScreen.screen === "EDIT_TASK" ? "Save Changes" : "Add Task"}
                         </button>
                         {(visibleScreen.screen === "EDIT_TASK" && visibleScreen.data) && (
-                            <button disabled={!isValidToSubmit} onClick={hanldeClickMarkAsDone} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition disabled:bg-gray-300 outline-none">Mark as Done</button>
+                            <button disabled={!isValidToSubmit} onClick={hanldeClickMarkAsDone} className="bg-teal-800 dark:bg-teal-600 text-white px-4 py-1 rounded-full hover:bg-teal-900 dark:hover:bg-teal-700 transition disabled:bg-gray-300 dark:disabled:bg-gray-500 outline-none">Mark as Done</button>
                         )}
-                        <button onClick={handleClickCancel} className="bg-teal-800 text-white px-4 py-1 rounded-full hover:bg-teal-900 transition outline-none">Cancel</button>
+                        <button onClick={handleClickCancel} className="bg-teal-800 dark:bg-teal-600 text-white px-4 py-1 rounded-full hover:bg-teal-900 dark:hover:bg-teal-700 transition outline-none">Cancel</button>
                     </div>
                 </div>
-
             </div>
         </>
     )
